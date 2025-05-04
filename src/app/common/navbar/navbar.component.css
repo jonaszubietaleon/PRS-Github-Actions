@@ -1,0 +1,58 @@
+/* Animaciones para el menú desplegable */
+.absolute {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Estilos adicionales para mejorar la apariencia del navbar */
+nav {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Estilos para la animación del avatar */
+.group .rounded-full {
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.group:hover .rounded-full {
+  transform: scale(1.05);
+}
+
+/* Animación para el modal */
+.fixed.inset-0.z-50 {
+  animation: fadeIn 0.3s ease;
+}
+
+.bg-gray-800.border.border-gray-700 {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Estilo para indicar elementos clickeables */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Mejora el efecto hover en los botones */
+button:hover {
+  transition: all 0.2s ease;
+}

@@ -1,0 +1,90 @@
+/* Estilos específicos para el dashboard */
+
+/* Clases para los iconos - Esta implementación asume que se está utilizando un framework de iconos como Font Awesome o similar */
+/* Si estás usando otro sistema de iconos, ajusta estos estilos según sea necesario */
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+/* Mapeo de nombres de iconos a clases de Font Awesome */
+.icon-chicken::before { content: '\f6d3'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-egg::before { content: '\f7fb'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-home::before { content: '\f015'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-utensils::before { content: '\f2e7'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-syringe::before { content: '\f48e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-refresh-cw::before { content: '\f2f1'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-clipboard-list::before { content: '\f46d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-list-checks::before { content: '\f0ae'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-package::before { content: '\f466'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-shopping-cart::before { content: '\f07a'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-bird::before { content: '\f535'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-bar-chart-2::before { content: '\f080'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-alert-triangle::before { content: '\f071'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-alert-circle::before { content: '\f06a'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-trending-down::before { content: '\f107'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-bar-chart::before { content: '\f080'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-chevron-right::before { content: '\f054'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.icon-arrow-right::before { content: '\f061'; font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+
+/* Media queries para mejorar la responsividad */
+@media (max-width: 640px) {
+  .grid {
+    gap: 1rem !important;
+  }
+  
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Ajustes para tarjetas en pantallas muy pequeñas */
+  .xs\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Ajustes para animaciones y transiciones */
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.transition-colors {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Efectos de hover para elementos interactivos */
+.hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+.hover\:bg-gray-50:hover {
+  background-color: rgba(249, 250, 251, 1);
+}
+
+/* Ajustes para tablas responsivas */
+.overflow-x-auto {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mejoras para elementos visuales en dashboard */
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}

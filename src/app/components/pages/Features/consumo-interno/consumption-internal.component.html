@@ -1,0 +1,316 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <!-- Header -->
+  <header class="bg-white shadow-md py-4 mb-6">
+    <div class="w-full px-4">
+      <h1 class="text-2xl font-extrabold text-blue-900 md:text-4xl">
+        <span class="bg-gradient-to-r from-indigo-400 to-blue-600 bg-clip-text text-transparent">
+          <i class="fas fa-city mr-2"></i> Gestión de Consumo Interno
+        </span>
+      </h1>
+    </div>
+  </header>
+
+  <div class="container mx-auto my-4 p-2 md:p-4 bg-white shadow-md rounded-lg">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+      <h2 class="text-lg md:text-xl font-bold mb-2 md:mb-0">
+        <i class="fas fa-list mr-2"></i>Registros de Consumo
+      </h2>
+      
+      <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <button 
+          (click)="openFormConsumption()"
+          class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-plus mr-2"></i>
+          <span class="hidden sm:inline">Nuevo Consumo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel de Control -->
+    <div class="mb-4">
+      <div class="flex flex-col md:flex-row gap-4 items-center">
+        <!-- Filtro Activo/Inactivo -->
+        <button 
+          (click)="toggleConsumption()"
+          class="flex items-center px-4 py-2 rounded-lg font-medium transition-colors"
+          [class.bg-green-600]="showingActive"
+          [class.bg-gray-600]="!showingActive"
+          [class.text-white]="true"
+        >
+          <i class="fas mr-2" [class.fa-eye]="showingActive" [class.fa-eye-slash]="!showingActive"></i>
+          {{ showingActive ? 'Activos' : 'Inactivos' }}
+        </button>
+
+        <!-- Buscador - Icono corregido -->
+        <div class="relative flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+          </div>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (input)="applyFilter()"
+            placeholder="Buscar..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+        </div>
+
+        <!-- Selector de Casa para Reporte -->
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+          <select 
+            [(ngModel)]="selectedHome" 
+            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Todas las casas</option>
+            <option *ngFor="let home of homesList" [value]="home">{{ home }}</option>
+          </select>
+          
+          <button 
+            (click)="downloadHomeReport()" 
+            [disabled]="!selectedHome"
+            class="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i class="fas fa-file-alt mr-2"></i>
+            <span class="hidden md:inline">Reporte</span>
+          </button>
+        </div>
+
+        <!-- Dropdown de Exportación -->
+        <div class="relative inline-block export-dropdown-container">
+          <button 
+            (click)="toggleExportDropdown($event)"
+            class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <i class="fas fa-file-export mr-2"></i>
+            <span class="hidden md:inline">Exportar</span>
+            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+          </button>
+          
+          <div 
+            *ngIf="showExportDropdown"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200"
+          >
+            <div class="py-1">
+              <a (click)="downloadPDF(); showExportDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <i class="fas fa-file-pdf text-red-500 mr-2"></i> PDF General
+              </a>
+              <a (click)="downloadExcel(); showExportDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <i class="fas fa-file-excel text-green-500 mr-2"></i> Excel
+              </a>
+              <a (click)="downloadCSV(); showExportDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                <i class="fas fa-file-csv text-blue-500 mr-2"></i> CSV
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-center">
+          <div class="p-3 bg-blue-100 rounded-full mr-4">
+            <i class="fas fa-boxes text-blue-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Total Cantidad</h3>
+            <p class="text-2xl font-bold text-gray-800">{{ totalQuantity }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-center">
+          <div class="p-3 bg-green-100 rounded-full mr-4">
+            <i class="fas fa-weight-hanging text-green-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Total Peso</h3>
+            <p class="text-2xl font-bold text-gray-800">{{ totalWeight.toFixed(2) }} kg</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-center">
+          <div class="p-3 bg-yellow-100 rounded-full mr-4">
+            <i class="fas fa-tag text-yellow-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Precio Promedio</h3>
+            <p class="text-2xl font-bold text-gray-800">S/. {{ (totalPrice / (filteredConsumption.length || 1)).toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-center">
+          <div class="p-3 bg-purple-100 rounded-full mr-4">
+            <i class="fas fa-money-bill-wave text-purple-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">Valor Total</h3>
+            <p class="text-2xl font-bold text-gray-800">S/. {{ totalSaleValue.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla con color celeste claro (#a8d8ea) -->
+    <div class="hidden md:block overflow-x-auto">
+      <table class="min-w-full border-separate border-spacing-y-2 text-sm md:text-base">
+        <thead>
+          <tr>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">ID</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Fecha</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Casa</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Cantidad</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Peso (kg)</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Precio Uni.</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Valor Vent.</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Estado</th>
+            <th class="px-2 md:px-4 py-2 md:py-3 font-semibold text-blue-900 bg-blue-100 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredConsumption" class="bg-gray-50 hover:bg-gray-100 text-center">
+            <td class="px-2 md:px-4 py-2 md:py-3">{{ item.id_consumption }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">{{ formatDate(item.date) }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">{{ item.names }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">{{ item.quantity }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">{{ item.weight.toFixed(2) }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">S/. {{ item.price.toFixed(2) }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">S/. {{ item.salevalue.toFixed(2) }}</td>
+            <td class="px-2 md:px-4 py-2 md:py-3">
+              <span [class.text-green-600]="item.status === 'A'" [class.text-red-600]="item.status !== 'A'">
+                {{ item.status === 'A' ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="px-2 md:px-4 py-2 md:py-3 flex justify-center space-x-2">
+              <button 
+                *ngIf="item.status === 'A'"
+                (click)="openFormConsumption(item)"
+                class="text-blue-500 hover:text-blue-700 text-lg"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              <button 
+                (click)="toggleConsumptionState(item.id_consumption, item.status)"
+                [class.text-red-500]="item.status === 'A'"
+                [class.text-green-500]="item.status !== 'A'"
+                [class.hover:text-red-700]="item.status === 'A'"
+                [class.hover:text-green-700]="item.status !== 'A'"
+                class="text-lg"
+              >
+                <i class="fas" [class.fa-times]="item.status === 'A'" [class.fa-check]="item.status !== 'A'"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>            
+      </table>
+    </div>
+
+    <!-- Vista de tarjetas para móviles -->
+    <div class="md:hidden">
+      <div *ngFor="let item of filteredConsumption" class="bg-gray-50 p-3 rounded-lg mb-3 shadow-sm">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-bold text-blue-900">
+            <i class="fas fa-egg text-blue-500 mr-1"></i> Consumo #{{ item.id_consumption }}
+          </h3>
+          <div class="flex space-x-2">
+            <button 
+              *ngIf="item.status === 'A'"
+              (click)="openFormConsumption(item)"
+              class="text-blue-500 hover:text-blue-700 text-lg"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button 
+              (click)="toggleConsumptionState(item.id_consumption, item.status)"
+              [class.text-red-500]="item.status === 'A'"
+              [class.text-green-500]="item.status !== 'A'"
+              [class.hover:text-red-700]="item.status === 'A'"
+              [class.hover:text-green-700]="item.status !== 'A'"
+              class="text-lg"
+            >
+              <i class="fas" [class.fa-times]="item.status === 'A'" [class.fa-check]="item.status !== 'A'"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-calendar-day text-blue-500 mr-1"></i> Fecha:</p>
+            <p>{{ formatDate(item.date) }}</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-home text-blue-500 mr-1"></i> Casa:</p>
+            <p>{{ item.names }}</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-boxes text-blue-500 mr-1"></i> Cantidad:</p>
+            <p>{{ item.quantity }}</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-weight-hanging text-blue-500 mr-1"></i> Peso:</p>
+            <p>{{ item.weight.toFixed(2) }} kg</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-tag text-blue-500 mr-1"></i> Precio:</p>
+            <p>S/. {{ item.price.toFixed(2) }}</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-money-bill-wave text-blue-500 mr-1"></i> Valor:</p>
+            <p>S/. {{ item.salevalue.toFixed(2) }}</p>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-700"><i class="fas fa-circle text-blue-500 mr-1"></i> Estado:</p>
+            <p [class.text-green-600]="item.status === 'A'" [class.text-red-600]="item.status !== 'A'">
+              {{ item.status === 'A' ? 'Activo' : 'Inactivo' }}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="filteredConsumption.length === 0" class="text-center py-8">
+        <i class="fas fa-database text-4xl text-gray-400 mb-2"></i>
+        <p class="text-lg font-medium text-gray-700">No se encontraron registros</p>
+        <p class="text-sm text-gray-500 mb-4">No hay consumos que coincidan con tu búsqueda</p>
+        <button 
+          (click)="openFormConsumption()"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-plus mr-2"></i>Agregar nuevo consumo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diálogo Modal -->
+  <div *ngIf="showDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-0">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-xl mx-2 md:mx-auto overflow-auto max-h-screen">
+      <!-- Encabezado del Modal -->
+      <div class="bg-indigo-100 p-3 md:p-4 rounded-t-lg sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg md:text-xl font-bold text-indigo-900">
+            <i class="fas fa-egg mr-2"></i>
+            {{ selectedConsumption ? 'Editar Consumo' : 'Agregar Nuevo Consumo' }}
+          </h3>
+          <button class="text-gray-600 hover:text-gray-800" (click)="closeDialog()">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Cuerpo del Modal -->
+      <div class="p-3 md:p-6">
+        <app-form-consumption 
+          [consumptionData]="selectedConsumption"
+          (onClose)="handleDialogResult($event)"
+        ></app-form-consumption>
+      </div>
+    </div>
+  </div>
+</div>
