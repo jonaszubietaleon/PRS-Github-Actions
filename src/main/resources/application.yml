@@ -1,0 +1,40 @@
+# usando el cloud de Neon
+
+
+
+# es de forma local
+# usando el cloud de Neon
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://ep-round-shadow-a5ylnn14.us-east-2.aws.neon.tech/db_casa?ssl=true
+    username: db_casa_owner
+    password: 1BCJTQ5OWlKo
+
+
+
+
+
+  # es de forma local
+  #spring:
+  #r2dbc:
+  #url: r2dbc:postgresql://localhost:5432/db_casa
+  #username: postgres
+  #password: admin
+
+  #datasource:
+  #url: jdbc:postgresql://localhost:5432/db_casa
+  #username: local_user
+  #password: local_password
+  #driver-class-name: org.postgresql.Driver
+
+  #spring:
+    #r2dbc:
+    #url: r2dbc:postgresql://localhost:5432/db_casa
+    #username: postgres
+    #password: admin
+
+    #datasource:
+    #url: jdbc:postgresql://localhost:5432/db_casa
+    #username: local_user
+    #password: local_password
+    #driver-class-name: org.postgresql.Driver
