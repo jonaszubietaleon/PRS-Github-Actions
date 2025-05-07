@@ -1,0 +1,30 @@
+name: 🚀 Frontend Build Check
+
+on:
+  push:
+    branches: [ fronten ]
+  pull_request:
+    branches: [ fronten ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'  # ✅ Esto habilita el cache automático de dependencias
+
+      - name: 📦 Instalar dependencias
+        run: npm install
+
+      - name: 🧪 Compilar proyecto Angular
+        run: npm run build --if-present
+
+      - name: 🧼 Lint (ESLint o Angular)
+        run: npm run lint --if-present
